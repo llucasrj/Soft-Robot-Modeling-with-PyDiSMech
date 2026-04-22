@@ -7,8 +7,7 @@ def add_point_forces(robot, node_indices, force_vectors):
     # Ensure numpy array
     force_vectors = np.asarray(force_vectors)
 
-    dof_indices = robot.map_node_to_dof(node_indices) # returns 1D array of dof indices for node list
-    
-    fpt[dof_indices] = force_vectors.reshape(-1) # reshape to 1D if needed
-    # print(f"Adding point forces at nodes {node_indices} with force vectors {force_vectors}")
+    # dof_indices = robot.map_node_to_dof(node_indices)  # original: shape (N,3), breaks multi-node assignment
+    dof_indices = robot.map_node_to_dof(node_indices).reshape(-1) # flattening -RYAN 
+    fpt[dof_indices] = force_vectors.reshape(-1)
     return fpt
