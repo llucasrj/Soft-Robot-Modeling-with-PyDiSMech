@@ -473,17 +473,21 @@ class SoftRobot:
 
     def update(
         self,
-        q: np.ndarray = None,
-        u: np.ndarray = None,
-        a: np.ndarray = None,
-        a1: np.ndarray = None,
-        a2: np.ndarray = None,
-        m1: np.ndarray = None,
-        m2: np.ndarray = None,
-        ref_twist: np.ndarray = None,
-        free_dof: np.ndarray = None
+        q: np.ndarray = None,          # (n_dof,) configuration: node xyz (3 per node), then one twist angle per edge
+        u: np.ndarray = None,          # (n_dof,) velocity, same layout as q
+        a: np.ndarray = None,          # (n_dof,) acceleration, same layout as q (only used by Newmark-beta)
+        a1: np.ndarray = None,         # (n_edges, 3) reference frame vector 1: perpendicular to the edge, carried along by parallel transport
+        a2: np.ndarray = None,         # (n_edges, 3) reference frame vector 2: perpendicular to both the edge and a1
+        m1: np.ndarray = None,         # (n_edges, 3) material frame vector 1: a1 rotated by the edge's twist angle
+        m2: np.ndarray = None,         # (n_edges, 3) material frame vector 2: a2 rotated by the edge's twist angle
+        ref_twist: np.ndarray = None,  # twist at each joint between two edges from the reference frames alone (used by twist energy)
+        free_dof: np.ndarray = None    # indices of q that are allowed to move (fix_nodes/fix_edges work by shrinking this)
     ) -> "SoftRobot":
-        """Return a new SoftRobot with updated state"""
+        """Return a new SoftRobot with updated state.
+
+        Only the fields you pass are replaced; the rest are left as they are.
+        The original robot is not modified, and every array is copied.
+        """
         state_updates = {
             k: v.copy() for k, v in locals().items()
             if k != "self" and v is not None
