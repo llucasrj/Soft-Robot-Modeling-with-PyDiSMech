@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Environment:
 
     def __init__(self):
@@ -16,6 +19,13 @@ class Environment:
         elif key == 'hydrodynamics':
             self.rho = kwargs['rho']    # REUSING
             self.cd = kwargs['cd']
+        elif key == 'anisotropicDrag':
+            self.rho = kwargs['rho']    # REUSING
+            self.drag_ct = np.asarray(kwargs['ct'], dtype=float)
+            self.drag_cn = np.asarray(kwargs['cn'], dtype=float)
+            self.drag_width = np.asarray(kwargs['width'], dtype=float)
+            self.drag_length = np.asarray(kwargs['length'], dtype=float)
+            self.drag_tangent_nodes = np.asarray(kwargs['tangent_nodes'], dtype=np.int64)
         elif key == 'aerodynamics':
             self.rho = kwargs['rho']    # REUSING
             self.cd = kwargs['cd']

@@ -196,3 +196,6 @@ shellData.js
 *.gif
 *.xls
 *.xlsx
+# frog_robot: regenerable sim outputs, and third-party paper data (unlicensed upstream; fetched by scripts)
+experiments/frog_robot/outputs/
+experiments/frog_robot/paper_data/

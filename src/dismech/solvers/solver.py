@@ -26,6 +26,19 @@ class NumpySolver(Solver):
         return np.linalg.solve(J, F)
 
 
+class ScipySparseSolver(Solver):
+    """Sparse direct solve with SciPy (SuperLU); no extra dependencies."""
+
+    def __init__(self, **kwargs):
+        import scipy.sparse.linalg
+        self.spsolve = scipy.sparse.linalg.spsolve
+
+    def solve(self, J: np.ndarray | sp.csr_matrix, F: np.ndarray):
+        if isinstance(J, np.ndarray):
+            J = sp.csr_matrix(J)
+        return self.spsolve(J.tocsc(), F)
+
+
 class PardisoSolver(Solver):
 
     def __init__(self, **kwargs):

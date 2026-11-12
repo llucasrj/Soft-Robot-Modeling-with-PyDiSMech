@@ -8,14 +8,14 @@ import numpy as np
 from ..soft_robot import SoftRobot
 from ..state import RobotState
 from ..elastics import ElasticEnergy, StretchEnergy, HingeEnergy, BendEnergy, TriangleEnergy, TwistEnergy
-from ..external_forces import compute_gravity_forces, compute_aerodynamic_forces_vectorized, compute_ground_contact, compute_ground_contact_friction, compute_rft, compute_damping_force, compute_surface_viscous_drag, compute_thrust_force_and_jacobian, add_point_forces
+from ..external_forces import compute_gravity_forces, compute_aerodynamic_forces_vectorized, compute_ground_contact, compute_ground_contact_friction, compute_rft, compute_damping_force, compute_surface_viscous_drag, compute_anisotropic_drag, compute_thrust_force_and_jacobian, add_point_forces
 # from ..external_forces import predictor_step_for_ground_contact, corrector_step_for_ground_contact
-from ..solvers import Solver, NumpySolver, PardisoSolver
+from ..solvers import Solver, NumpySolver, ScipySparseSolver, PardisoSolver
 from ..visualizer import Visualizer
 from ..contact import IMCEnergy, ShellContactEnergy, IMCFrictionEnergy
 
 _SOLVERS: typing.Dict[str, Solver] = {
-    'np': NumpySolver, 'pardiso': PardisoSolver}
+    'np': NumpySolver, 'scipy': ScipySparseSolver, 'pardiso': PardisoSolver}
 
 
 STRETCH = 'stretch'
@@ -261,6 +261,10 @@ class TimeStepper(metaclass=abc.ABCMeta):
             F, J, = compute_surface_viscous_drag(robot, q, u)
             forces -= F
             jacobian -= J  # FIXME: Sparse option
+        if "anisotropicDrag" in robot.env.ext_force_list:
+            F, J, = compute_anisotropic_drag(robot, q, u)
+            forces -= F
+            jacobian -= J
         if "thrust" in robot.env.ext_force_list:
             F, J, = compute_thrust_force_and_jacobian(robot, q, u)
             forces -= F

@@ -242,6 +242,13 @@ class Geometry:
             plt.show()
 
 
+    def remove_bend_twist_springs(self, indices) -> None:
+        """Drop bend-twist springs by index (e.g. to control how many bending energies a rod junction has).
+        Must be called before the Geometry is passed to SoftRobot."""
+        keep = np.setdiff1d(np.arange(len(self.__bend_twist_springs)), np.asarray(indices))
+        self.__bend_twist_springs = self.__bend_twist_springs[keep]
+        self.__bend_twist_signs = self.__bend_twist_signs[keep]
+
     @staticmethod
     def __safe_concat(arrs: typing.Tuple[np.ndarray]) -> np.ndarray:
         """
